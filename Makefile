@@ -1,13 +1,19 @@
-all: package.json bin
+all: package.json bin/tsc
 
-TypeScript:
+TypeScript/:
 	git clone https://github.com/Microsoft/TypeScript.git
 
-TypeScript/built: TypeScript
+.TypeScript-pull: TypeScript/
+	cd TypeScript && git pull
+
+TypeScript/built/: .TypeScript-pull
 	cd TypeScript && jake
 
-bin: TypeScript/built
+bin/: TypeScript/built
 	cp -r TypeScript/built/local/ ./bin
+
+bin/tsc: .TypeScript-pull bin/
+	cp TypeScript/bin/tsc ./bin/ && chmod a+x ./bin/tsc
 
 package.json: TypeScript
 	node copy-package.js
